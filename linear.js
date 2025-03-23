@@ -2,7 +2,7 @@
     "use strict";
     
     global.apistatus = true;
-    if (global.apistatus === false) {
+    if (global.apistatus != true) {
         global.Zb = {
             ZbWidthIncrease: function() {
                 throw new Error("DeniedError: API access denied. Invalid or missing API key!");
