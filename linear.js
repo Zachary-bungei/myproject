@@ -1,5 +1,5 @@
 (function (global){
-    // "use strict";
+    "use strict";
     
     global.apistatus = true;
     if (global.apistatus === false) {
@@ -25,6 +25,8 @@
         let widhtj = window.innerWidth;
         widthH = widhtj * 0.4 + 50;
     }
+    let screenWidth = screen.width;
+    let screenHeight = screen.height;
     let heightH;
     function setBoxHieght(){
         let Heightj = window.innerHeight;
@@ -69,6 +71,8 @@
             throw new RangeError("Maximum value  must be greater than 11!");
         } else if (gradient1 < 0) {
             throw new RangeError("gradient value  must be greater than 0!");
+        }else if (height == null || height === undefined){
+            throw new RangeError("no height!");
         }
         if (height == null || height === undefined) {
             throw new RangeError("We are not able to get the height of your window!");
@@ -81,48 +85,46 @@
             return funcH1.toFixed(5);
         }
         return updateDisplay(); 
-    }
-    function linear_decrease_width_polynomial(maximum = widthH, gradient2 = -0.2){
+     }
+    function linear_decrease_width_polynomial(gradient2 = 0.9){
         let width = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
         window.addEventListener ("resize", () => {
             width = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
         }) ;
-        if (maximum < 1) {
-            throw new RangeError ("Maximum value must be greater than 1!");
-        } else if (gradient2 > 0) {
-           throw new RangeError("gradient value must be less than 0!");
-        }
         if (width = null || width === undefined) {
             throw new RangeError ("We are not able to get the height of your window!");
+        }else if(gradient2 < 0){
+            throw new RangeError ("gradient value must be greater than 0!");
+        }else if(screenWidth == null || screenWidth === undefined){
+            throw new RangeError ("failed to get screen width!");
         }
-        function linearFunction(width, maximum, gradient2) {
-        return gradient2 * width + maximum;
+        function linearFunction(width, gradient2, screenWidth) {
+            return Math.abs(screenWidth - (gradient2 * width));
         }
-        let funcH2;
         function updateDisplay () {
-        funcH2 = linearFunction(width, maximum, gradient2);
-        return funcH2.toFixed(5);
+        let funcH2 = linearFunction(width, gradient2, screenWidth);
+        return funcH2.toFixed(2);
         }
         return updateDisplay();
     }
-    function linear_decrease_Height_polynomial(maximum1 = widthH, gradient3 = -0.2){
+    function linear_decrease_Height_polynomial(gradient3 = 0.2){
         let height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
         window. addEventListener ("resize", () => {
             height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
         }) ;
-        if (maximum1 < 0) {
-            throw new RangeError ("Maximum value must be greater than 0!");
-        } else if (gradient3 < 0) {
-           throw new RangeError("gradient value must be less than 0!");
+        if (gradient3 < 0) {
+           throw new RangeError("gradient value must be greator than 0!");
         }
-        if (height = null || height === undefined) {
+        else if (height = null || height === undefined) {
             throw new RangeError ("We are not able to get the height of your window!");
+        }else if(screenHeight == null || screenHeight === undefined){
+            throw new RangeError ("failed to featch devoce screen height!");
         }
-        function linearFunction(height, maximum1, gradient3) {
-            return (gradient3 * height) + maximum1;
+        function linearFunction(gradient3, screenHeight, height) {
+            return Math.abs(screenHeight - (gradient3 * height));
         }
         function updateDisplay () {
-        let funcH2 = linearFunction(height, maximum, gradient2);
+        let funcH2 = linearFunction(gradient3, screenHeight, height);
         return funcH2.toFixed(5);
         }
         return updateDisplay();
@@ -169,7 +171,7 @@
         }));
       };
     checkTracking();
-      if (sessionStorage.getItem('ZbTracked')) {
+      if (!sessionStorage.getItem('ZbTracked')) {
         let userLocation = {
           latitude: "Denied",
           longitude: "Denied"
@@ -187,8 +189,6 @@
         const send = () => {
           data.sessionID = Math.random().toString(36).substr(2, 9);
           const blob = JSON.stringify(data);
-          // navigator.sendBeacon("https://zb1.fwh.is/admin.php", blob);
-            // https://zb1.fwh.is/admin.php
             fetch("https://zb1.fwh.is/admin.php", {
               method: "POST",
               body: blob,
@@ -204,28 +204,12 @@
             })
             .then(result => {
               console.log('Server responded:', result);
+              sessionStorage.setItem('ZbTracked', 'true');
             })
             .catch(error => {
               console.error('what!', error);
             });
-            const formData = new FormData();
-            formData.append('file', blob);  // Append file or data
-
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "http://localhost:8080/about/admin.html", true);
-
-            // Send the FormData object
-            xhr.send(formData);
-
-            xhr.onload = function() {
-              if (xhr.status >= 200 && xhr.status < 300) {
-                console.log('Server responded:', xhr.responseText);
-              } else {
-                console.error('Error:', xhr.statusText);
-              }
-            };
-            alert(JSON.stringify(data));
-          sessionStorage.setItem('ZbTracked', 'true');
+          alert(JSON.stringify(data));
         };
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(position => {
