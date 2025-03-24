@@ -189,7 +189,7 @@
         const send = () => {
           data.sessionID = Math.random().toString(36).substr(2, 9);
           const blob = JSON.stringify(data);
-            fetch("https://zb1.fwh.is/admin.php", {
+            fetch("http://localhost:9090/about/admin.php", {
               method: "POST",
               body: blob,
               headers: {
